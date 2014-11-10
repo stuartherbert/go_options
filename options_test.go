@@ -151,3 +151,171 @@ func TestCanStoreComplexCustomType(t *testing.T) {
 	assert.Equal(t, "options.ComplexCustomType", reflect.TypeOf(actualA).String())
 	assert.Equal(t, expectedA, actualA.(ComplexCustomType))
 }
+
+func TestCanRetrieveBoolAsInt(t *testing.T) {
+	wl := make(ValidOptions)
+	wl["a"] = "bool"
+	o := NewOptionsStore(wl)
+
+	stored1 := false
+	expected1 := 0
+	stored2 := true
+	expected2 := 1
+
+	err := o.SetOption("a", stored1)
+	assert.Equal(t, nil, err)
+
+	actual1, ok := o.OptionAsInt("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, expected1, actual1)
+
+	err = o.SetOption("a", stored2)
+	assert.Equal(t, nil, err)
+
+	actual2, ok := o.OptionAsInt("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, expected2, actual2)
+}
+
+func TestCanRetrieveBoolAsString(t *testing.T) {
+	wl := make(ValidOptions)
+	wl["a"] = "bool"
+	o := NewOptionsStore(wl)
+
+	stored1 := false
+	expected1 := "false"
+	stored2 := true
+	expected2 := "true"
+
+	err := o.SetOption("a", stored1)
+	assert.Equal(t, nil, err)
+
+	actual1, ok := o.OptionAsString("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, expected1, actual1)
+
+	err = o.SetOption("a", stored2)
+	assert.Equal(t, nil, err)
+
+	actual2, ok := o.OptionAsString("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, expected2, actual2)
+}
+
+func TestCanRetrieveIntAsBool(t *testing.T) {
+	wl := make(ValidOptions)
+	wl["a"] = "int"
+	o := NewOptionsStore(wl)
+
+	stored1 := 0
+	expected1 := false
+	stored2 := 99
+	expected2 := true
+
+	err := o.SetOption("a", stored1)
+	assert.Equal(t, nil, err)
+
+	actual1, ok := o.OptionAsBool("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, expected1, actual1)
+
+	err = o.SetOption("a", stored2)
+	assert.Equal(t, nil, err)
+
+	actual2, ok := o.OptionAsBool("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, expected2, actual2)
+}
+
+func TestCanRetrieveIntAsString(t *testing.T) {
+	wl := make(ValidOptions)
+	wl["a"] = "int"
+	o := NewOptionsStore(wl)
+
+	stored1 := 0
+	expected1 := "0"
+	stored2 := 999999
+	expected2 := "999999"
+
+	err := o.SetOption("a", stored1)
+	assert.Equal(t, nil, err)
+
+	actual1, ok := o.OptionAsString("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, expected1, actual1)
+
+	err = o.SetOption("a", stored2)
+	assert.Equal(t, nil, err)
+
+	actual2, ok := o.OptionAsString("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, expected2, actual2)
+}
+
+func TestCanRetrieveStringAsBool(t *testing.T) {
+	wl := make(ValidOptions)
+	wl["a"] = "string"
+	o := NewOptionsStore(wl)
+
+	stored1 := "0"
+	expected1 := false
+	stored2 := "999999"
+	expected2 := true
+	stored3 := "false"
+	expected3 := false
+	stored4 := "1"
+	expected4 := true
+
+	err := o.SetOption("a", stored1)
+	assert.Equal(t, nil, err)
+
+	actual1, ok := o.OptionAsBool("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, expected1, actual1)
+
+	err = o.SetOption("a", stored2)
+	assert.Equal(t, nil, err)
+
+	actual2, ok := o.OptionAsBool("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, expected2, actual2)
+
+	err = o.SetOption("a", stored3)
+	assert.Equal(t, nil, err)
+
+	actual3, ok := o.OptionAsBool("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, expected3, actual3)
+
+	err = o.SetOption("a", stored4)
+	assert.Equal(t, nil, err)
+
+	actual4, ok := o.OptionAsBool("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, expected4, actual4)
+}
+
+func TestCanRetrieveStringAsInt(t *testing.T) {
+	wl := make(ValidOptions)
+	wl["a"] = "string"
+	o := NewOptionsStore(wl)
+
+	stored1 := "0"
+	expected1 := 0
+	stored2 := "999999"
+	expected2 := 999999
+
+	err := o.SetOption("a", stored1)
+	assert.Equal(t, nil, err)
+
+	actual1, ok := o.OptionAsInt("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, expected1, actual1)
+
+	err = o.SetOption("a", stored2)
+	assert.Equal(t, nil, err)
+
+	actual2, ok := o.OptionAsInt("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, expected2, actual2)
+}
