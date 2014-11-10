@@ -151,3 +151,28 @@ func TestCanStoreComplexCustomType(t *testing.T) {
 	assert.Equal(t, "options.ComplexCustomType", reflect.TypeOf(actualA).String())
 	assert.Equal(t, expectedA, actualA.(ComplexCustomType))
 }
+
+func TestCanRetrieveBoolAsInt(t *testing.T) {
+	wl := make(ValidOptions)
+	wl["a"] = "bool"
+	o := NewOptionsStore(wl)
+
+	stored1 := false
+	expected1 := 0
+	stored2 := true
+	expected2 := 1
+
+	err := o.SetOption("a", stored1)
+	assert.Equal(t, nil, err)
+
+	actual1, ok := o.OptionAsInt("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, expected1, actual1)
+
+	err = o.SetOption("a", stored2)
+	assert.Equal(t, nil, err)
+
+	actual2, ok := o.OptionAsInt("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, expected2, actual2)
+}

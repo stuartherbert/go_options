@@ -119,13 +119,24 @@ func (self *OptionsStore) OptionAsInt(name string) (int, bool) {
 		return 0, false
 	}
 
-	// is the option the right type?
-	if requiredType != "int" {
+	// do we have the data?
+	data, ok := self.Options[name]
+	if !ok {
 		return 0, false
 	}
 
-	// return the typecasted value
-	return self.Options[name].(int), true
+	// is the option the right type?
+	switch requiredType {
+	case "int":
+		return data.(int), true
+	case "bool":
+		if data.(bool) == false {
+			return 0, true
+		}
+		return 1, true
+	default:
+		return 0, false
+	}
 }
 
 // OptionAsString() retrieves an option from the OptionsStore and returns it
