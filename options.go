@@ -1,5 +1,5 @@
-// Copyright (c) 2014-present Stuart Herbert
-// Released under a 3-clause BSD license
+// Copyright (c) 2014-present Stuart Herbert.
+// Released under a 3-clause BSD license.
 package options
 
 import (
