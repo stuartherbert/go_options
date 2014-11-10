@@ -149,11 +149,22 @@ func (self *OptionsStore) OptionAsString(name string) (string, bool) {
 		return "", false
 	}
 
-	// is the option the right type?
-	if requiredType != "string" {
+	// do we have the data at all?
+	data, ok := self.Options[name]
+	if !ok {
 		return "", false
 	}
 
-	// return the typecasted value
-	return self.Options[name].(string), true
+	// is the option the right type?
+	switch requiredType {
+	case "string":
+		return data.(string), true
+	case "bool":
+		if data.(bool) == true {
+			return "true", true
+		}
+		return "false", true
+	default:
+		return "", false
+	}
 }

@@ -176,3 +176,28 @@ func TestCanRetrieveBoolAsInt(t *testing.T) {
 	assert.Equal(t, true, ok)
 	assert.Equal(t, expected2, actual2)
 }
+
+func TestCanRetrieveBoolAsString(t *testing.T) {
+	wl := make(ValidOptions)
+	wl["a"] = "bool"
+	o := NewOptionsStore(wl)
+
+	stored1 := false
+	expected1 := "false"
+	stored2 := true
+	expected2 := "true"
+
+	err := o.SetOption("a", stored1)
+	assert.Equal(t, nil, err)
+
+	actual1, ok := o.OptionAsString("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, expected1, actual1)
+
+	err = o.SetOption("a", stored2)
+	assert.Equal(t, nil, err)
+
+	actual2, ok := o.OptionAsString("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, expected2, actual2)
+}
