@@ -20,6 +20,26 @@ func TestCanInitialise(t *testing.T) {
 	assert.Equal(t, 1, len(o.ValidOptions))
 }
 
+func TestCanSetIntOption(t *testing.T) {
+	validOptions := make(ValidOptions)
+	validOptions["flag"] = "int"
+	o := NewOptionsStore(validOptions)
+	o.SetOption("flag", 1)
+	assert.Equal(t, 1, len(o.Options))
+}
+
+func TestCanGetIntOptions(t *testing.T) {
+	validOptions := make(ValidOptions)
+	validOptions["flag"] = "int"
+	o := NewOptionsStore(validOptions)
+
+	expected := 99
+	o.SetOption("flag", expected)
+	actual, ok := o.GetOptionInt("flag")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, expected, actual)
+}
+
 func TestCanSetStringOption(t *testing.T) {
 	validOptions := make(ValidOptions)
 	validOptions["flag"] = "string"
