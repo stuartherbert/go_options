@@ -5,6 +5,7 @@ package options
 import (
 	"fmt"
 	"reflect"
+	"strconv"
 )
 
 var (
@@ -175,6 +176,8 @@ func (self *OptionsStore) OptionAsString(name string) (string, bool) {
 			return "true", true
 		}
 		return "false", true
+	case "int":
+		return strconv.Itoa(data.(int)), true
 	default:
 		return "", false
 	}
