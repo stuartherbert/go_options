@@ -8,31 +8,43 @@ import (
 )
 
 var (
-	ErrUnknownOption = fmt.Errorf("unknown option")
-	ErrWrongType     = fmt.Errorf("wrong type for value")
+	ErrUnknownOption = fmt.Errorf("unknown option")       // attempt to store an option that isn't on the whitelist
+	ErrWrongType     = fmt.Errorf("wrong type for value") // attempt to store an option using the wrong type of data
 )
 
-// Options is
+// Options is a simple list of stored data, indexed by name
 type Options map[string]interface{}
 
 // ValidOptions is a list of the options that are valid, and their required
 // data type
+//
+// You can safely use any data type you want as the data type. Just remember
+// that you need to prefix it with the package name. e.g.
+//
+//     wl := make(ValidOptions)
+//     wl["options"] = "options.Options"
 type ValidOptions map[string]string
 
+// OptionsStore is for embedding in your own data structures
 type OptionsStore struct {
-	ValidOptions ValidOptions
+	ValidOptions ValidOptions // the whitelist of options that can be stored
 	Options      Options
 }
 
-func NewOptionsStore(validOptions ValidOptions) *OptionsStore {
+// NewOptionsStore() will return a standalone OptionsStore for you to use
+func NewOptionsStore(whitelist ValidOptions) *OptionsStore {
 	retval := &OptionsStore{
 		Options:      make(Options),
-		ValidOptions: validOptions,
+		ValidOptions: whitelist,
 	}
 
 	return retval
 }
 
+// SetOption() will store an option for later retrieval
+//
+// * If the option isn't in the whitelist, returns ErrUnknownOption
+// * If the value is the wrong type, returns ErrWrongType
 func (self *OptionsStore) SetOption(name string, value interface{}) error {
 	// is this a valid option?
 	requiredType, ok := self.ValidOptions[name]
@@ -51,6 +63,21 @@ func (self *OptionsStore) SetOption(name string, value interface{}) error {
 	return nil
 }
 
+// Option() will retrieve an option of any type from the OptionsStore
+//
+// Once you have retrieved it, you will need to typecast it yourself to
+// the original type. This is safe for you to do so, as the whitelist ensures
+// that any option stored has the correct data type.
+//
+//    wl := make(ValidOptions)
+//    wl["foo"] = "string"
+//
+//    o := NewOptionStore(wl)
+//    data, ok := o.Option("foo")
+//    if !ok {
+//        // ... deal with missing data
+//    }
+//    foo := data.(string)
 func (self *OptionsStore) Option(name string) (interface{}, bool) {
 	// do we know this option?
 	_, ok := self.ValidOptions[name]
@@ -63,6 +90,9 @@ func (self *OptionsStore) Option(name string) (interface{}, bool) {
 	return data, ok
 }
 
+// OptionAsBool() retrieves an option from the OptionsStore and returns it as
+// a boolean value. The second return value indicates whether the option was
+// found or not.
 func (self *OptionsStore) OptionAsBool(name string) (bool, bool) {
 	// do we know this option?
 	requiredType, ok := self.ValidOptions[name]
@@ -70,13 +100,18 @@ func (self *OptionsStore) OptionAsBool(name string) (bool, bool) {
 		return false, false
 	}
 
+	// is the option the right type?
 	if requiredType != "bool" {
 		return false, false
 	}
 
+	// return the typecasted value
 	return self.Options[name].(bool), true
 }
 
+// OptionAsInt() retrieves an option from the OptionsStore and returns it as
+// an int value. The second return value indicates whether the option was found
+// or not.
 func (self *OptionsStore) OptionAsInt(name string) (int, bool) {
 	// do we know this option?
 	requiredType, ok := self.ValidOptions[name]
@@ -84,13 +119,18 @@ func (self *OptionsStore) OptionAsInt(name string) (int, bool) {
 		return 0, false
 	}
 
+	// is the option the right type?
 	if requiredType != "int" {
 		return 0, false
 	}
 
+	// return the typecasted value
 	return self.Options[name].(int), true
 }
 
+// OptionAsString() retrieves an option from the OptionsStore and returns it
+// as a string. The second return value indicates whether the option was found
+// or not.
 func (self *OptionsStore) OptionAsString(name string) (string, bool) {
 	// do we know this option?
 	requiredType, ok := self.ValidOptions[name]
@@ -98,9 +138,11 @@ func (self *OptionsStore) OptionAsString(name string) (string, bool) {
 		return "", false
 	}
 
+	// is the option the right type?
 	if requiredType != "string" {
 		return "", false
 	}
 
+	// return the typecasted value
 	return self.Options[name].(string), true
 }
