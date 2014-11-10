@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"reflect"
 	"strconv"
+	"strings"
 )
 
 var (
@@ -116,6 +117,13 @@ func (self *OptionsStore) OptionAsBool(name string) (bool, bool) {
 			return false, true
 		}
 		return true, true
+	case "string":
+		switch strings.ToLower(data.(string)) {
+		case "0", "false":
+			return false, true
+		default:
+			return true, true
+		}
 	default:
 		return false, false
 	}
