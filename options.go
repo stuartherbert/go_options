@@ -10,15 +10,18 @@ import (
 )
 
 var (
-	ErrUnknownOption = fmt.Errorf("unknown option")       // attempt to store an option that isn't on the whitelist
-	ErrWrongType     = fmt.Errorf("wrong type for value") // attempt to store an option using the wrong type of data
+	// attempt to store an option that isn't on the whitelist
+	ErrUnknownOption = fmt.Errorf("unknown option")
+
+	// attempt to store an option using the wrong type of data
+	ErrWrongType = fmt.Errorf("wrong type for value")
 )
 
-// Options is a simple list of stored data, indexed by name
+// Options is a simple list of stored data, indexed by name.
 type Options map[string]interface{}
 
 // ValidOptions is a list of the options that are valid, and their required
-// data type
+// data type.
 //
 // You can safely use any data type you want as the data type. Just remember
 // that you need to prefix it with the package name. e.g.
@@ -27,13 +30,13 @@ type Options map[string]interface{}
 //     wl["options"] = "options.Options"
 type ValidOptions map[string]string
 
-// OptionsStore is for embedding in your own data structures
+// OptionsStore is for embedding in your own data structures.
 type OptionsStore struct {
 	ValidOptions ValidOptions // the whitelist of options that can be stored
 	Options      Options
 }
 
-// NewOptionsStore() will return a standalone OptionsStore for you to use
+// NewOptionsStore() will return a standalone OptionsStore for you to use.
 func NewOptionsStore(whitelist ValidOptions) *OptionsStore {
 	retval := &OptionsStore{
 		Options:      make(Options),
@@ -43,10 +46,11 @@ func NewOptionsStore(whitelist ValidOptions) *OptionsStore {
 	return retval
 }
 
-// SetOption() will store an option for later retrieval
+// SetOption() will store an option for later retrieval.
 //
-// * If the option isn't in the whitelist, returns ErrUnknownOption
-// * If the value is the wrong type, returns ErrWrongType
+// If the option isn't in the whitelist, returns ErrUnknownOption.
+//
+// If the value is the wrong type, returns ErrWrongType.
 func (self *OptionsStore) SetOption(name string, value interface{}) error {
 	// is this a valid option?
 	requiredType, ok := self.ValidOptions[name]
@@ -65,7 +69,7 @@ func (self *OptionsStore) SetOption(name string, value interface{}) error {
 	return nil
 }
 
-// Option() will retrieve an option of any type from the OptionsStore
+// Option() will retrieve an option of any type from the OptionsStore.
 //
 // Once you have retrieved it, you will need to typecast it yourself to
 // the original type. This is safe for you to do so, as the whitelist ensures
@@ -95,6 +99,13 @@ func (self *OptionsStore) Option(name string) (interface{}, bool) {
 // OptionAsBool() retrieves an option from the OptionsStore and returns it as
 // a boolean value. The second return value indicates whether the option was
 // found or not.
+//
+// You can also use OptionAsBool() on integer and string options.
+//
+// For integers, 0 == false, !0 == true.
+//
+// For strings, "0" and "false" == false, everything else == true. We convert
+// strings to lower case before the comparision, making this expensive :(
 func (self *OptionsStore) OptionAsBool(name string) (bool, bool) {
 	// do we know this option?
 	requiredType, ok := self.ValidOptions[name]
@@ -132,6 +143,12 @@ func (self *OptionsStore) OptionAsBool(name string) (bool, bool) {
 // OptionAsInt() retrieves an option from the OptionsStore and returns it as
 // an int value. The second return value indicates whether the option was found
 // or not.
+//
+// You can also use OptionAsInt() on bools and strings.
+//
+// For bools, false == 0 and true == 1.
+//
+// For strings, you get back the result of strconv.Atoi().
 func (self *OptionsStore) OptionAsInt(name string) (int, bool) {
 	// do we know this option?
 	requiredType, ok := self.ValidOptions[name]
@@ -168,6 +185,12 @@ func (self *OptionsStore) OptionAsInt(name string) (int, bool) {
 // OptionAsString() retrieves an option from the OptionsStore and returns it
 // as a string. The second return value indicates whether the option was found
 // or not.
+//
+// You can also use OptionAsString() on bools and ints.
+//
+// For bools, false == "false" and true == "true"
+//
+// For ints, you get back the result of strconv.Itoa()
 func (self *OptionsStore) OptionAsString(name string) (string, bool) {
 	// do we know this option?
 	requiredType, ok := self.ValidOptions[name]
