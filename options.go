@@ -100,13 +100,24 @@ func (self *OptionsStore) OptionAsBool(name string) (bool, bool) {
 		return false, false
 	}
 
-	// is the option the right type?
-	if requiredType != "bool" {
+	// do we have the option?
+	data, ok := self.Options[name]
+	if !ok {
 		return false, false
 	}
 
-	// return the typecasted value
-	return self.Options[name].(bool), true
+	// is the option the right type?
+	switch requiredType {
+	case "bool":
+		return data.(bool), true
+	case "int":
+		if data.(int) == 0 {
+			return false, true
+		}
+		return true, true
+	default:
+		return false, false
+	}
 }
 
 // OptionAsInt() retrieves an option from the OptionsStore and returns it as
