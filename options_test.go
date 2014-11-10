@@ -251,3 +251,28 @@ func TestCanRetrieveIntAsString(t *testing.T) {
 	assert.Equal(t, true, ok)
 	assert.Equal(t, expected2, actual2)
 }
+
+func TestCanRetrieveStringAsInt(t *testing.T) {
+	wl := make(ValidOptions)
+	wl["a"] = "string"
+	o := NewOptionsStore(wl)
+
+	stored1 := "0"
+	expected1 := 0
+	stored2 := "999999"
+	expected2 := 999999
+
+	err := o.SetOption("a", stored1)
+	assert.Equal(t, nil, err)
+
+	actual1, ok := o.OptionAsInt("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, expected1, actual1)
+
+	err = o.SetOption("a", stored2)
+	assert.Equal(t, nil, err)
+
+	actual2, ok := o.OptionAsInt("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, expected2, actual2)
+}

@@ -146,6 +146,12 @@ func (self *OptionsStore) OptionAsInt(name string) (int, bool) {
 			return 0, true
 		}
 		return 1, true
+	case "string":
+		retval, err := strconv.Atoi(data.(string))
+		if err != nil {
+			return 0, false
+		}
+		return retval, true
 	default:
 		return 0, false
 	}
