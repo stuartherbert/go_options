@@ -20,6 +20,26 @@ func TestCanInitialise(t *testing.T) {
 	assert.Equal(t, 1, len(o.ValidOptions))
 }
 
+func TestCanSetBoolOption(t *testing.T) {
+	validOptions := make(ValidOptions)
+	validOptions["flag"] = "bool"
+	o := NewOptionsStore(validOptions)
+	o.SetOption("flag", true)
+	assert.Equal(t, 1, len(o.Options))
+}
+
+func TestCanGetBoolOptions(t *testing.T) {
+	validOptions := make(ValidOptions)
+	validOptions["flag"] = "bool"
+	o := NewOptionsStore(validOptions)
+
+	expected := true
+	o.SetOption("flag", expected)
+	actual, ok := o.OptionAsBool("flag")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, expected, actual)
+}
+
 func TestCanSetIntOption(t *testing.T) {
 	validOptions := make(ValidOptions)
 	validOptions["flag"] = "int"
@@ -35,7 +55,7 @@ func TestCanGetIntOptions(t *testing.T) {
 
 	expected := 99
 	o.SetOption("flag", expected)
-	actual, ok := o.GetOptionInt("flag")
+	actual, ok := o.OptionAsInt("flag")
 	assert.Equal(t, true, ok)
 	assert.Equal(t, expected, actual)
 }
@@ -55,7 +75,7 @@ func TestCanGetStringOptions(t *testing.T) {
 
 	expected := "test value"
 	o.SetOption("flag", expected)
-	actual, ok := o.GetOptionString("flag")
+	actual, ok := o.OptionAsString("flag")
 	assert.Equal(t, true, ok)
 	assert.Equal(t, expected, actual)
 }

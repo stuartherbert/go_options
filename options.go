@@ -51,7 +51,21 @@ func (self *OptionsStore) SetOption(name string, value interface{}) error {
 	return nil
 }
 
-func (self *OptionsStore) GetOptionInt(name string) (int, bool) {
+func (self *OptionsStore) OptionAsBool(name string) (bool, bool) {
+	// do we know this option?
+	requiredType, ok := self.ValidOptions[name]
+	if !ok {
+		return false, false
+	}
+
+	if requiredType != "bool" {
+		return false, false
+	}
+
+	return self.Options[name].(bool), true
+}
+
+func (self *OptionsStore) OptionAsInt(name string) (int, bool) {
 	// do we know this option?
 	requiredType, ok := self.ValidOptions[name]
 	if !ok {
@@ -65,7 +79,7 @@ func (self *OptionsStore) GetOptionInt(name string) (int, bool) {
 	return self.Options[name].(int), true
 }
 
-func (self *OptionsStore) GetOptionString(name string) (string, bool) {
+func (self *OptionsStore) OptionAsString(name string) (string, bool) {
 	// do we know this option?
 	requiredType, ok := self.ValidOptions[name]
 	if !ok {
