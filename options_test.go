@@ -4,6 +4,7 @@ package options
 
 import (
 	"github.com/bmizerany/assert"
+	"reflect"
 	"testing"
 )
 
@@ -78,4 +79,75 @@ func TestCanGetStringOptions(t *testing.T) {
 	actual, ok := o.OptionAsString("flag")
 	assert.Equal(t, true, ok)
 	assert.Equal(t, expected, actual)
+}
+
+func TestCanGetOptions(t *testing.T) {
+	validOptions := make(ValidOptions)
+	validOptions["a"] = "string"
+	validOptions["b"] = "bool"
+	validOptions["c"] = "uint8"
+	o := NewOptionsStore(validOptions)
+
+	expectedA := "test value"
+	o.SetOption("a", expectedA)
+	actualA, ok := o.Option("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, "string", reflect.TypeOf(actualA).String())
+	assert.Equal(t, expectedA, actualA.(string))
+
+	expectedB := false
+	o.SetOption("b", expectedB)
+	actualB, ok := o.Option("b")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, "bool", reflect.TypeOf(actualB).String())
+	assert.Equal(t, expectedB, actualB.(bool))
+
+	expectedC := uint8(100)
+	o.SetOption("c", expectedC)
+	actualC, ok := o.Option("c")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, "uint8", reflect.TypeOf(actualC).String())
+	assert.Equal(t, expectedC, actualC.(uint8))
+}
+
+type SimpleCustomType uint16
+
+func TestCanStoreSimpleCustomType(t *testing.T) {
+	validOptions := make(ValidOptions)
+	validOptions["a"] = "options.SimpleCustomType"
+	o := NewOptionsStore(validOptions)
+
+	expectedA := SimpleCustomType(1000)
+	err := o.SetOption("a", expectedA)
+	assert.Equal(t, nil, err)
+	assert.Equal(t, 1, len(o.Options))
+
+	actualA, ok := o.Option("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, "options.SimpleCustomType", reflect.TypeOf(actualA).String())
+	assert.Equal(t, expectedA, actualA.(SimpleCustomType))
+}
+
+type ComplexCustomType struct {
+	Foo string
+	Bar uint8
+}
+
+func TestCanStoreComplexCustomType(t *testing.T) {
+	validOptions := make(ValidOptions)
+	validOptions["a"] = "options.ComplexCustomType"
+	o := NewOptionsStore(validOptions)
+
+	expectedA := ComplexCustomType{
+		Foo: "trout",
+		Bar: uint8(99),
+	}
+	err := o.SetOption("a", expectedA)
+	assert.Equal(t, nil, err)
+	assert.Equal(t, 1, len(o.Options))
+
+	actualA, ok := o.Option("a")
+	assert.Equal(t, true, ok)
+	assert.Equal(t, "options.ComplexCustomType", reflect.TypeOf(actualA).String())
+	assert.Equal(t, expectedA, actualA.(ComplexCustomType))
 }
